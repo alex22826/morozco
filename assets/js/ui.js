@@ -58,7 +58,7 @@ MZ.ui = (() => {
     if (header) {
       header.innerHTML = `
         <div class="container header">
-          <a class="logo" href="index.html" aria-label="${esc(MZ.config.brand)} — на главную">
+          <a class="logo" href="index.html" aria-label="${esc(MZ.config.brand)}, на главную">
             <img src="assets/img/logo-160.webp" alt="" width="58" height="58">
             <span class="logo__text"><b>${esc(MZ.config.brand)}</b><span>домашние полуфабрикаты</span></span>
           </a>
@@ -188,7 +188,7 @@ MZ.ui = (() => {
     setTimeout(() => { el.classList.add('is-out'); setTimeout(() => el.remove(), 300); }, 2200);
   }
 
-  /* ---------- анимации: появление, пауза вне экрана, снег, счётчики ---------- */
+  /* ---------- анимации: появление, пауза вне экрана, снег, счетчики ---------- */
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -263,7 +263,7 @@ MZ.ui = (() => {
     function set(v, fire) {
       current = v;
       const o = options.find(x => x.value === v) || options[0];
-      // short — подпись для узкой кнопки на телефоне
+      // short - подпись для узкой кнопки на телефоне
       $('.dd__value', root).innerHTML = `<span class="dd__full">${esc(o.label)}</span><span class="dd__short">${esc(o.short || o.label)}</span>`;
       opts.forEach(li => li.setAttribute('aria-selected', li.dataset.value === v));
       if (fire && onChange) onChange(v);
@@ -277,7 +277,7 @@ MZ.ui = (() => {
       if (root.classList.contains('is-open')) return;
       root.classList.add('is-open');
       btn.setAttribute('aria-expanded', 'true');
-      // если снизу мало места — открываем вверх
+      // если снизу мало места - открываем вверх
       const r = btn.getBoundingClientRect();
       root.classList.toggle('dd--up', window.innerHeight - r.bottom < 220 && r.top > 220);
       highlight(Math.max(0, options.findIndex(o => o.value === current)));
@@ -362,7 +362,7 @@ MZ.ui = (() => {
           <dl>
             <div><dt>Состав</dt><dd>${esc(p.composition)}</dd></div>
             <div><dt>Приготовление</dt><dd>${esc(p.cook)}</dd></div>
-            <div><dt>Хранение</dt><dd>При −18 °C — 6 месяцев. Повторно не замораживать.</dd></div>
+            <div><dt>Хранение</dt><dd>При -18°C до 6 месяцев. Повторно не замораживать.</dd></div>
           </dl>
           <div class="pmodal__buy">
             <div class="price">${MZ.lead.money(p.price).replace(/ сум$/, '')} <small>сум</small></div>
@@ -423,7 +423,7 @@ MZ.ui = (() => {
   }
 
   function setBusy(btn, busy, label) {
-    if (busy) { btn.dataset.label = btn.innerHTML; btn.innerHTML = '<span class="spinner"></span>' + (label || 'Отправляем…'); btn.disabled = true; }
+    if (busy) { btn.dataset.label = btn.innerHTML; btn.innerHTML = '<span class="spinner"></span>' + (label || 'Отправляем'); btn.disabled = true; }
     else { btn.innerHTML = btn.dataset.label || btn.innerHTML; btn.disabled = false; }
   }
 
@@ -457,11 +457,11 @@ MZ.ui = (() => {
   }
 
   const LEAD_MODALS = {
-    callback: { title: 'Заказать звонок', lead: 'Оставьте номер — перезвоним и поможем с выбором и доставкой.', company: false },
-    wholesale: { title: 'Оптовым покупателям', lead: 'Магазинам, кафе и ресторанам — специальные цены и доставка по графику.', company: true }
+    callback: { title: 'Заказать звонок', lead: 'Оставьте номер. Перезвоним и поможем с выбором и доставкой.', company: false },
+    wholesale: { title: 'Оптовым покупателям', lead: 'Для магазинов, кафе и ресторанов есть специальные цены и доставка по графику.', company: true }
   };
 
-  // extra — дополнительные поля перед галочкой согласия (например, «Сообщение» на странице контактов)
+  // extra - дополнительные поля перед галочкой согласия (например, «Сообщение» на странице контактов)
   function leadFormHtml(type, { company = false, submit = 'Отправить заявку', extra = '' } = {}) {
     const id = type + '-' + (formSeq + 1);
     return `<form novalidate>
@@ -486,7 +486,7 @@ MZ.ui = (() => {
 
   /* ---------- согласие на cookie ---------- */
 
-  // 'all' — все, включая сторонние (карта Яндекса, в будущем аналитика); 'necessary' — только нужные для работы сайта
+  // 'all' - все, включая сторонние (карта Яндекса, в будущем аналитика); 'necessary' - только нужные для работы сайта
   const COOKIE_KEY = 'mz-cookie-consent';
   const COOKIE_TTL = 365 * 24 * 3600 * 1000; // через год спрашиваем снова
   let cookieMemo = null; // если localStorage недоступен (приватный режим)
@@ -513,8 +513,8 @@ MZ.ui = (() => {
       document.body.insertAdjacentHTML('beforeend', `
         <div class="cookie" id="cookieBanner" role="dialog" aria-live="polite" aria-label="Использование cookie">
           <div class="cookie__icon">${icon('cookie')}</div>
-          <p><b>Мы используем cookie</b>Хранилище браузера нужно для работы корзины, а cookie Яндекса — для карты на странице контактов.
-            Подробнее — в <a href="cookies.html">Политике cookie</a>.</p>
+          <p><b>Мы используем cookie</b>Хранилище браузера нужно для работы корзины, а cookie Яндекса нужны для карты на странице контактов.
+            Подробнее в <a href="cookies.html">Политике cookie</a>.</p>
           <div class="cookie__btns">
             <button class="btn btn--outline" type="button" data-cookie="necessary">Только необходимые</button>
             <button class="btn btn--primary" type="button" data-cookie="all">Принять все</button>

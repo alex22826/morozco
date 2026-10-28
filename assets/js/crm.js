@@ -26,7 +26,7 @@
   const state = { tab: 'all', q: '', unseen: 0 };
   const openedAt = Date.now();
 
-  /* ---------- приём сообщений ntfy ---------- */
+  /* ---------- прием сообщений ntfy ---------- */
   function accept(msg) {
     if (msg.event !== 'message' || db.leads[msg.id]) return;
     const lead = MZ.lead.parse(msg.message);
@@ -48,7 +48,7 @@
     es.onopen = () => { retry = 0; setLive('on', 'Онлайн'); };
     es.onmessage = e => { try { accept(JSON.parse(e.data)); } catch (err) { console.warn(err); } };
     es.onerror = () => {
-      setLive('off', 'Нет связи, переподключаюсь…');
+      setLive('off', 'Нет связи, переподключаюсь');
       es.close();
       // переподключаемся с последней полученной заявки, чтобы ничего не пропустить
       setTimeout(connect, Math.min(30000, 2000 * Math.pow(2, retry++)));
@@ -80,7 +80,7 @@
   function notify(lead) {
     beep();
     toast('Новая заявка: ' + (lead.name || '') + (lead.total ? ' · ' + MZ.lead.money(lead.total) : ''));
-    if (document.hidden) { state.unseen++; document.title = `(${state.unseen}) Заявки — Moroz'Co`; }
+    if (document.hidden) { state.unseen++; document.title = `(${state.unseen}) Заявки | Moroz'Co`; }
     if ('Notification' in window && Notification.permission === 'granted') {
       try {
         new Notification('Новая заявка с сайта', {
@@ -90,7 +90,7 @@
       } catch (e) { /* мобильные браузеры без Notification-конструктора */ }
     }
   }
-  document.addEventListener('visibilitychange', () => { if (!document.hidden) { state.unseen = 0; document.title = "Заявки — Moroz'Co"; } });
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) { state.unseen = 0; document.title = "Заявки | Moroz'Co"; } });
 
   function toast(text) {
     const box = $('#toasts');
@@ -162,7 +162,7 @@
       </article>`;
     }).join('') : `<div class="crm-empty"><img src="../assets/img/logo-160.webp" alt="">
         <h3>${all.length ? 'Ничего не найдено' : 'Заявок пока нет'}</h3>
-        <p>${all.length ? 'Измените фильтр или поиск.' : 'Оформите заказ на сайте или нажмите «Тестовая заявка» — она появится здесь сразу.'}</p></div>`;
+        <p>${all.length ? 'Измените фильтр или поиск.' : 'Оформите заказ на сайте или нажмите «Тестовая заявка», и она сразу появится здесь.'}</p></div>`;
   }
 
   /* ---------- действия ---------- */
@@ -191,7 +191,7 @@
   });
   $('#btnSound').addEventListener('click', () => { db.sound = !db.sound; save(); renderButtons(); if (db.sound) beep(); });
 
-  // Тестовая заявка уходит тем же путём, что и с сайта
+  // Тестовая заявка уходит тем же путем, что и с сайта
   $('#btnTest').addEventListener('click', async e => {
     const btn = e.currentTarget;
     btn.disabled = true;
@@ -206,7 +206,7 @@
       .map(i => Object.assign(i, { qty: 1 + Math.floor(Math.random() * 3) }));
     const res = await MZ.lead.send({
       type: 'order',
-      name: names[Math.floor(Math.random() * names.length)] + ' (тест)',
+      name: names[Math.floor(Math.random() * names.length)] + ', тест',
       phone: '+998 (90) ' + (100 + Math.floor(Math.random() * 900)) + '-' + (10 + Math.floor(Math.random() * 90)) + '-' + (10 + Math.floor(Math.random() * 90)),
       comment: 'Тестовая заявка из панели',
       items, total: items.reduce((s, i) => s + i.price * i.qty, 0)
@@ -216,10 +216,10 @@
   });
 
   $('#crmFoot').innerHTML = cfg.ntfyTopic
-    ? `Демо-канал: заявки с сайта приходят через <b>ntfy.sh</b>, тема <code>${esc(cfg.ntfyTopic)}</code> (сервер хранит их до 12 часов, здесь — сохраняются в браузере).
+    ? `Демо-канал: заявки с сайта приходят через <b>ntfy.sh</b>, тема <code>${esc(cfg.ntfyTopic)}</code>. Сервер хранит их до 12 часов, а здесь они сохраняются в браузере.
        Статусы заявок видны только на этом устройстве. Push на телефон: установите приложение <b>ntfy</b> и подпишитесь на эту тему,
        или откройте <a href="${esc(cfg.ntfyServer)}/${esc(cfg.ntfyTopic)}" target="_blank" rel="noopener">веб-версию</a>.`
-    : 'Канал ntfy выключен в config.js — заявки уходят только на вебхук CRM.';
+    : 'Канал ntfy выключен в config.js, заявки уходят только на вебхук CRM.';
 
   renderButtons();
   render();

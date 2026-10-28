@@ -81,12 +81,12 @@
         { value: 'popular', label: 'Сначала хиты', short: 'Хиты' },
         { value: 'cheap', label: 'Сначала дешевле', short: 'Дешевле' },
         { value: 'expensive', label: 'Сначала дороже', short: 'Дороже' },
-        { value: 'name', label: 'По названию', short: 'А–Я' }
+        { value: 'name', label: 'По названию', short: 'А-Я' }
       ],
       onChange: v => { state.sort = v; render(); }
     });
 
-    // в адресе — выбранные категории: catalog.html#pelmeni,manty
+    // в адресе - выбранные категории: catalog.html#pelmeni,manty
     function readHash() {
       const ids = decodeURIComponent(location.hash.slice(1)).split(',');
       state.cats = new Set(ids.filter(id => CATS.some(c => c.id === id)));
@@ -128,7 +128,7 @@
       ];
       $('#activeFilters').innerHTML = chips.length
         ? chips.map(c => `<button class="af" type="button" data-remove-filter="${esc(c.key)}" aria-label="Убрать фильтр ${esc(c.label)}">${esc(c.label)}${MZ.ui.icon('x')}</button>`).join('') +
-          '<button class="af af--reset" type="button" data-filters-reset>Сбросить всё</button>'
+          '<button class="af af--reset" type="button" data-filters-reset>Сбросить все</button>'
         : '';
     }
 
@@ -161,14 +161,14 @@
       else {
         const set = group === 'cat' ? state.cats : state.tags;
         if (inp.checked) set.add(inp.value); else set.delete(inp.value);
-        // отмечены все категории — это и есть «Вся продукция»
+        // отмечены все категории - это и есть «Вся продукция»
         if (group === 'cat' && state.cats.size === CATS.length) state.cats.clear();
       }
       writeHash();
       render();
     });
 
-    // на телефоне фильтры — выезжающая снизу панель
+    // на телефоне фильтры - выезжающая снизу панель
     const isSheet = () => window.matchMedia('(max-width: 900px)').matches;
     const syncAria = () => sheet.setAttribute('aria-hidden', isSheet() && !document.body.classList.contains('filters-open'));
     function openSheet() {
@@ -232,7 +232,7 @@
     });
     MZ.ui.bindLeadForm($('form', cf), 'callback');
 
-    // Карта Яндекса ставит свои cookie: грузим её только после «Принять все» или по кнопке
+    // Карта Яндекса ставит свои cookie: грузим ее только после «Принять все» или по кнопке
     const map = $('#map');
     const { lat, lon } = c.map;
     let mapLoaded = false;
@@ -243,7 +243,7 @@
     }
     function mapStub() {
       map.innerHTML = `<div class="map__stub">${MZ.ui.icon('pin')}<b>Карта проезда</b>
-        <p>Карта Яндекса использует cookie. Показать её на странице или открыть в приложении?</p>
+        <p>Карта Яндекса использует cookie. Показать ее на странице или открыть в приложении?</p>
         <div class="btns">
           <button class="btn btn--navy btn--sm" type="button" data-map-load>Показать карту</button>
           <a class="btn btn--outline btn--sm" href="https://yandex.ru/maps/?pt=${lon},${lat}&z=16&l=map" target="_blank" rel="noopener">Открыть в Яндекс Картах</a>
@@ -264,7 +264,7 @@
     $('#toc').innerHTML = heads.map(h => `<a href="#${h.id}">${esc(h.textContent)}</a>`).join('');
     const links = $$('#toc a');
     const toc = $('.legal__toc');
-    // на ПК содержание раскрыто, на телефоне свёрнуто; реагируем только на смену ширины —
+    // на ПК содержание раскрыто, на телефоне свернуто; реагируем только на смену ширины -
     // мобильные браузеры шлют resize при прокрутке, когда прячется адресная строка
     let lastW = window.innerWidth;
     const syncOpen = () => { toc.open = window.innerWidth > 900; };

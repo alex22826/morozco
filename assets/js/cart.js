@@ -78,7 +78,7 @@ MZ.cart = (() => {
     const deliveryText = d.cost == null ? 'уточнит менеджер' : d.cost === 0 ? 'бесплатно' : MZ.lead.money(d.cost);
     const grand = sum + (d.cost || 0);
 
-    // форму не перерисовываем, если она уже есть — чтобы не потерять введённые данные
+    // форму не перерисовываем, если она уже есть - чтобы не потерять введенные данные
     const keepForm = $('#checkoutForm', body);
     const listHtml = ls.map(({ p, qty: q }) => `
       <div class="cart-line">
@@ -112,7 +112,7 @@ MZ.cart = (() => {
         <div class="field"><label for="c-phone">Телефон</label>
           <input class="input" id="c-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+998 (__) ___-__-__"><span class="field__err"></span></div>
         <div class="field"><label for="c-comment">Комментарий</label>
-          <textarea class="input" id="c-comment" name="comment" rows="2" placeholder="Адрес, удобное время — необязательно"></textarea></div>
+          <textarea class="input" id="c-comment" name="comment" rows="2" placeholder="Адрес и удобное время, если нужно"></textarea></div>
         ${MZ.ui.agreeHtml()}
         <button class="btn btn--primary btn--block" type="submit" ${d.ok ? '' : 'disabled'}>${icon('send')}Отправить заявку</button>
         <div class="form-error"></div>
@@ -201,7 +201,7 @@ MZ.cart = (() => {
     else close();
   });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
-  // корзина, изменённая в другой вкладке
+  // корзина, измененная в другой вкладке
   window.addEventListener('storage', e => { if (e.key === KEY) { items = load(); render(); } });
 
   render();

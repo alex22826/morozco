@@ -1,5 +1,5 @@
 /* Заявки: телефон, текст заявки, отправка во внешние каналы и разбор обратно.
-   Этот файл общий для сайта и панели /crm/ — формат текста задаётся здесь один раз. */
+   Этот файл общий для сайта и панели /crm/ - формат текста задается здесь один раз. */
 window.MZ = window.MZ || {};
 
 MZ.lead = (() => {
@@ -17,7 +17,7 @@ MZ.lead = (() => {
   // 9 цифр абонентского номера без кода страны
   function localDigits(value) {
     let d = String(value || '').replace(/\D/g, '');
-    // код страны может прийти дважды: префикс маски + вставленный «+998…»
+    // код страны может прийти дважды: префикс маски + вставленный «+998...»
     while (d.length > 9 && d.startsWith('998')) d = d.slice(3);
     return d.slice(0, 9);
   }
@@ -42,7 +42,7 @@ MZ.lead = (() => {
     });
     input.addEventListener('input', e => {
       let d = localDigits(input.value);
-      // Backspace по скобке или дефису не удаляет цифру — удаляем её сами
+      // Backspace по скобке или дефису не удаляет цифру - удаляем ее сами
       if (e.inputType && e.inputType.startsWith('delete') && d === prev) d = d.slice(0, -1);
       prev = d;
       input.value = d.length ? formatPhone(d) : '+998 ';
@@ -140,7 +140,7 @@ MZ.lead = (() => {
       jobs.push(post(cfg.webhookUrl, JSON.stringify(lead), { 'Content-Type': 'text/plain;charset=UTF-8' }));
     }
     if (!jobs.length) {
-      // Каналы не настроены — демо-режим: заявка остаётся только в этом браузере
+      // Каналы не настроены - демо-режим: заявка остается только в этом браузере
       console.warn('[MZ] каналы заявок не настроены, заявка не отправлена', lead);
       return { ok: true, number: lead.number, demo: true };
     }
