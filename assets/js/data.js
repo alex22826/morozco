@@ -1,5 +1,5 @@
 /* Каталог продукции. Цены и состав - демо, заменить на реальные.
-   img - путь от корня сайта; можно заменить SVG на фото (webp/jpg 4:3). */
+   img - путь от корня сайта, фото 4:3 в webp. Сейчас фото от нейросети, перед запуском заменить на настоящие. */
 window.MZ = window.MZ || {};
 
 MZ.categories = [
@@ -15,7 +15,7 @@ MZ.products = [
   {
     id: 'pelmeni-dom', cat: 'pelmeni', badge: 'hit',
     name: 'Пельмени «Домашние»', weight: '1 кг', price: 65000,
-    img: 'assets/img/products/pelmeni.svg',
+    img: 'assets/img/products/pelmeni-dom.webp',
     short: 'Говядина и тонкое тесто ручной лепки',
     desc: 'Классические пельмени по домашнему рецепту: сочный фарш из говядины с луком и тонкое эластичное тесто, которое не разваривается.',
     composition: 'Говядина, лук, мука высшего сорта, яйцо, вода, соль, черный перец.',
@@ -24,7 +24,7 @@ MZ.products = [
   {
     id: 'pelmeni-chicken', cat: 'pelmeni',
     name: 'Пельмени куриные', weight: '1 кг', price: 52000,
-    img: 'assets/img/products/pelmeni.svg',
+    img: 'assets/img/products/pelmeni-chicken.webp',
     short: 'Нежное куриное филе, легкий вариант',
     desc: 'Пельмени с нежным фаршем из куриного филе. Легкие и сытные, любимый вариант для детского меню.',
     composition: 'Филе курицы, лук, мука высшего сорта, яйцо, вода, соль, специи.',
@@ -33,7 +33,7 @@ MZ.products = [
   {
     id: 'vareniki-potato', cat: 'pelmeni',
     name: 'Вареники с картофелем', weight: '900 г', price: 32000,
-    img: 'assets/img/products/vareniki.svg',
+    img: 'assets/img/products/vareniki-potato.webp',
     short: 'Картофельное пюре с жареным луком',
     desc: 'Вареники с картофельным пюре и золотистым жареным луком. Особенно хороши со сметаной и шкварками.',
     composition: 'Картофель, лук, масло подсолнечное, мука высшего сорта, вода, соль.',
@@ -42,7 +42,7 @@ MZ.products = [
   {
     id: 'vareniki-tvorog', cat: 'pelmeni',
     name: 'Вареники с творогом', weight: '900 г', price: 42000,
-    img: 'assets/img/products/vareniki.svg',
+    img: 'assets/img/products/vareniki-tvorog.webp',
     short: 'Нежный творог, слегка сладкие',
     desc: 'Вареники с нежным творогом. Подавайте со сметаной, медом или ягодным вареньем.',
     composition: 'Творог, сахар, яйцо, мука высшего сорта, вода, соль.',
@@ -51,7 +51,7 @@ MZ.products = [
   {
     id: 'manty-beef', cat: 'manty', badge: 'hit',
     name: 'Манты с говядиной', weight: '1 кг', price: 68000,
-    img: 'assets/img/products/manty.svg',
+    img: 'assets/img/products/manty-beef.webp',
     short: 'Рубленая говядина, курдючный жир и лук',
     desc: 'Настоящие манты: рубленая говядина с курдючным жиром и большим количеством лука. Готовятся на пару, поэтому внутри много сока.',
     composition: 'Говядина, лук, курдючный жир, мука высшего сорта, вода, соль, зира, черный перец.',
@@ -60,7 +60,7 @@ MZ.products = [
   {
     id: 'manty-pumpkin', cat: 'manty',
     name: 'Манты с тыквой', weight: '1 кг', price: 45000,
-    img: 'assets/img/products/manty-pumpkin.svg',
+    img: 'assets/img/products/manty-pumpkin.webp',
     short: 'Сладкая тыква с луком, постное блюдо',
     desc: 'Узбекские манты с тыквой и луком: сочные, ароматные и легкие. Отличный постный вариант.',
     composition: 'Тыква, лук, масло сливочное, мука высшего сорта, вода, соль, специи.',
@@ -69,7 +69,7 @@ MZ.products = [
   {
     id: 'khinkali', cat: 'manty', badge: 'new',
     name: 'Хинкали с говядиной', weight: '1 кг', price: 70000,
-    img: 'assets/img/products/khinkali.svg',
+    img: 'assets/img/products/khinkali.webp',
     short: 'Сочный фарш с кинзой и бульоном внутри',
     desc: 'Хинкали по грузинскому рецепту: говядина, кинза, специи и наваристый бульон внутри. Едят руками, держа за «хвостик».',
     composition: 'Говядина, лук, кинза, мука высшего сорта, вода, соль, специи.',
@@ -78,7 +78,7 @@ MZ.products = [
   {
     id: 'kotlety-chicken', cat: 'kotlety',
     name: 'Котлеты куриные', weight: '800 г · 10 шт', price: 48000,
-    img: 'assets/img/products/kotlety-chicken.svg',
+    img: 'assets/img/products/kotlety-chicken.webp',
     short: 'Филе курицы в хрустящей панировке',
     desc: 'Сочные котлеты из куриного филе в золотистой панировке. Жарятся за 10 минут прямо из морозилки.',
     composition: 'Филе курицы, лук, хлеб, яйцо, панировочные сухари, соль, специи.',
@@ -87,7 +87,7 @@ MZ.products = [
   {
     id: 'kotlety-meat', cat: 'kotlety', badge: 'hit',
     name: 'Котлеты мясные «Домашние»', weight: '800 г · 10 шт', price: 62000,
-    img: 'assets/img/products/kotlety.svg',
+    img: 'assets/img/products/kotlety-meat.webp',
     short: 'Говядина с луком, как у мамы',
     desc: 'Котлеты из говядины по домашнему рецепту: мясо, лук, немного хлеба на молоке, и ничего лишнего.',
     composition: 'Говядина, лук, хлеб, молоко, яйцо, соль, черный перец.',
@@ -96,7 +96,7 @@ MZ.products = [
   {
     id: 'dolma', cat: 'dolma',
     name: 'Долма в виноградных листьях', weight: '800 г', price: 64000,
-    img: 'assets/img/products/dolma.svg',
+    img: 'assets/img/products/dolma.webp',
     short: 'Мясо с рисом в молодых листьях',
     desc: 'Долма из молодых виноградных листьев с начинкой из говядины, риса и зелени. Подавайте с мацони или чесночным соусом.',
     composition: 'Виноградные листья, говядина, рис, лук, зелень, соль, специи.',
@@ -105,7 +105,7 @@ MZ.products = [
   {
     id: 'golubtsy', cat: 'dolma',
     name: 'Голубцы с мясом и рисом', weight: '1 кг', price: 58000,
-    img: 'assets/img/products/golubtsy.svg',
+    img: 'assets/img/products/golubtsy.webp',
     short: 'В капустных листьях, с томатным соусом',
     desc: 'Голубцы в нежных капустных листьях с начинкой из мяса и риса. Тушатся в томатном соусе, получается готовый сытный ужин.',
     composition: 'Капуста, говядина, рис, лук, морковь, томатная паста, соль, специи.',
@@ -114,7 +114,7 @@ MZ.products = [
   {
     id: 'bliny-meat', cat: 'bliny',
     name: 'Блинчики с мясом', weight: '600 г · 8 шт', price: 38000,
-    img: 'assets/img/products/bliny.svg',
+    img: 'assets/img/products/bliny-meat.webp',
     short: 'Тонкие блинчики с мясной начинкой',
     desc: 'Тонкие блинчики, завернутые конвертиком, с начинкой из говяжьего фарша. Разогрейте на сковороде, и завтрак готов.',
     composition: 'Мука, молоко, яйцо, говядина, лук, масло, соль, сахар.',
@@ -123,7 +123,7 @@ MZ.products = [
   {
     id: 'bliny-tvorog', cat: 'bliny',
     name: 'Блинчики с творогом', weight: '600 г · 8 шт', price: 34000,
-    img: 'assets/img/products/bliny.svg',
+    img: 'assets/img/products/bliny-tvorog.webp',
     short: 'Сладкий творог с ванилью',
     desc: 'Блинчики с нежной творожной начинкой с ванилью. Вкусно со сметаной, медом или сгущенкой.',
     composition: 'Мука, молоко, яйцо, творог, сахар, ванилин, масло, соль.',
@@ -132,7 +132,7 @@ MZ.products = [
   {
     id: 'syrniki', cat: 'bliny', badge: 'hit',
     name: 'Сырники', weight: '500 г · 10 шт', price: 30000,
-    img: 'assets/img/products/syrniki.svg',
+    img: 'assets/img/products/syrniki.webp',
     short: 'Пышные, из натурального творога',
     desc: 'Пышные сырники из натурального творога, румяные снаружи и нежные внутри. Идеальный завтрак за 10 минут.',
     composition: 'Творог, мука, яйцо, сахар, ванилин, соль.',

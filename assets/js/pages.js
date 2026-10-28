@@ -9,6 +9,7 @@
   function initSlider(root) {
     const slides = $$('.slide', root);
     const dots = $('.slider__dots', root);
+    const bgs = $$('.hero__bg img', root); // фото под слайдами, по одному на слайд
     if (slides.length < 2) return;
     let cur = 0, timer = null;
     dots.innerHTML = slides.map((_, i) => `<button type="button" aria-label="Слайд ${i + 1}"></button>`).join('');
@@ -17,6 +18,7 @@
       cur = (i + slides.length) % slides.length;
       slides.forEach((s, k) => { s.classList.toggle('is-active', k === cur); s.setAttribute('aria-hidden', k !== cur); });
       $$('button', dots).forEach((d, k) => d.classList.toggle('is-active', k === cur));
+      bgs.forEach((b, k) => b.classList.toggle('is-active', k === cur));
     }
     const play = () => { stop(); timer = setInterval(() => go(cur + 1), 6500); };
     const stop = () => clearInterval(timer);
