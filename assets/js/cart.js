@@ -113,6 +113,7 @@ MZ.cart = (() => {
           <input class="input" id="c-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+998 (__) ___-__-__"><span class="field__err"></span></div>
         <div class="field"><label for="c-comment">Комментарий</label>
           <textarea class="input" id="c-comment" name="comment" rows="2" placeholder="Адрес, удобное время — необязательно"></textarea></div>
+        ${MZ.ui.agreeHtml()}
         <button class="btn btn--primary btn--block" type="submit" ${d.ok ? '' : 'disabled'}>${icon('send')}Отправить заявку</button>
         <div class="form-error"></div>
         <p class="form-note">Оплата при получении. Менеджер перезвонит, чтобы подтвердить заказ.</p>

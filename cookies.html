@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Политика cookie — Moroz'Co</title>
+  <meta name="description" content="Какие cookie и данные браузера использует сайт Moroz'Co и как от них отказаться.">
+  <meta name="theme-color" content="#123f73">
+  <link rel="icon" type="image/png" href="assets/img/favicon.png">
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+  <link rel="preload" href="assets/fonts/manrope-cyr.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/css/style.css?v=7">
+</head>
+<body data-page="legal">
+  <header class="site-header" id="siteHeader"></header>
+
+  <main>
+    <section class="page-hero" data-anim>
+      <div class="snow" aria-hidden="true"></div>
+      <div class="container">
+        <div class="crumbs"><a href="index.html">Главная</a><span>/</span><span>Политика cookie</span></div>
+        <h1>Политика использования cookie</h1>
+        <p>Редакция от <span data-co="docsDate"></span></p>
+      </div>
+    </section>
+
+    <section class="container legal">
+      <aside class="legal__aside">
+        <details class="legal__toc" open>
+          <summary>Содержание <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></summary>
+          <nav id="toc" aria-label="Содержание"></nav>
+        </details>
+        <div class="legal__docs">
+          <a href="privacy.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4M10 13h6M10 17h6"/></svg>Политика конфиденциальности</a>
+          <a href="consent.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4M10 13h6M10 17h6"/></svg>Согласие на обработку данных</a>
+          <a href="cookies.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4M10 13h6M10 17h6"/></svg>Политика cookie</a>
+        </div>
+      </aside>
+
+      <article class="legal__body">
+        <div class="legal__note">Шаблон документа для демо-версии сайта. Перед запуском текст и реквизиты проверяет юрист компании.</div>
+
+        <h2 id="what">1. Что такое cookie</h2>
+        <p>Cookie — небольшие файлы, которые сайт сохраняет в браузере. Похожим образом работает локальное хранилище браузера (localStorage). Они помогают сайту «помнить» ваши действия: например, что лежит в корзине.</p>
+        <p>Оператор сайта — <span data-co="legalName"></span>. Политика дополняет <a href="privacy.html">Политику конфиденциальности</a>.</p>
+
+        <h2 id="list">2. Что использует сайт</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Название</th><th>Для чего</th><th>Тип</th><th>Срок хранения</th></tr></thead>
+            <tbody>
+              <tr><td><code>mz-cart-v1</code><br>хранилище браузера</td><td>Сохраняет товары в корзине между визитами</td><td><span class="tag tag--ok">Необходимые</span></td><td>Пока вы не очистите корзину или данные браузера</td></tr>
+              <tr><td><code>mz-cookie-consent</code><br>хранилище браузера</td><td>Запоминает ваш выбор в окне о cookie</td><td><span class="tag tag--ok">Необходимые</span></td><td>12 месяцев</td></tr>
+              <tr><td>Cookie Яндекса (например, <code>yandexuid</code>)</td><td>Показ интерактивной карты на странице «Контакты»</td><td><span class="tag tag--warn">Сторонние</span></td><td>По правилам Яндекса</td></tr>
+              <tr><td>Веб-аналитика</td><td>Сейчас не используется. Если мы подключим её (например, Яндекс Метрику), она будет работать только после вашего согласия, а таблица обновится</td><td><span class="tag">Аналитические</span></td><td>—</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Сайт не использует cookie для рекламы и не передаёт их рекламным сетям.</p>
+
+        <h2 id="choice">3. Ваш выбор</h2>
+        <p>При первом посещении сайт показывает окно, где можно выбрать:</p>
+        <ul>
+          <li><b>«Принять все»</b> — работают необходимые и сторонние cookie, карта на странице «Контакты» загружается сразу;</li>
+          <li><b>«Только необходимые»</b> — работает только корзина. Вместо карты показывается кнопка: нажав её, вы разрешаете загрузить карту один раз.</li>
+        </ul>
+        <p>Изменить выбор можно в любой момент: <button class="inline-link" type="button" data-cookie-settings>открыть настройки cookie</button> (ссылка «Настройки cookie» есть и внизу каждой страницы).</p>
+
+        <h2 id="browser">4. Как удалить cookie</h2>
+        <p>Cookie и данные сайта можно удалить или запретить в настройках браузера — раздел «Конфиденциальность» или «Данные сайтов». Учтите: если удалить необходимые данные, корзина очистится.</p>
+
+        <h2 id="changes">5. Изменения</h2>
+        <p>Если состав cookie изменится, мы обновим эту страницу и дату редакции. Вопросы — на <a data-co="email" href="mailto:info@morozco.uz"></a>.</p>
+      </article>
+    </section>
+  </main>
+
+  <footer class="site-footer" id="siteFooter"></footer>
+
+  <script src="assets/js/config.js?v=7"></script>
+  <script src="assets/js/data.js?v=7"></script>
+  <script src="assets/js/rules.js?v=7"></script>
+  <script src="assets/js/lead.js?v=7"></script>
+  <script src="assets/js/ui.js?v=7"></script>
+  <script src="assets/js/cart.js?v=7"></script>
+  <script src="assets/js/pages.js?v=7"></script>
+</body>
+</html>

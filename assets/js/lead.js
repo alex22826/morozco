@@ -121,6 +121,10 @@ MZ.lead = (() => {
     lead.number = lead.number || newNumber();
     lead.createdAt = new Date().toISOString();
     lead.page = location.pathname;
+    // фиксируем, на какие документы человек дал согласие (уходит в вебхук CRM)
+    if (lead.consent === true) {
+      lead.consent = { given: true, at: lead.createdAt, docs: ['consent.html', 'privacy.html'], edition: MZ.config.company.docsDate };
+    }
 
     const jobs = [];
     if (cfg.ntfyTopic) {

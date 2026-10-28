@@ -225,18 +225,58 @@
     MZ.ui.observeReveal($('#contactList'));
 
     const cf = $('#contactForm');
-    cf.innerHTML = MZ.ui.leadFormHtml('contact', { submit: 'Отправить' })
-      .replace('<button class="btn', `<div class="field"><label for="f-comment-contact">Сообщение</label>
-        <textarea class="input" id="f-comment-contact" name="comment" rows="3" placeholder="Вопрос, пожелание или удобное время для звонка"></textarea></div><button class="btn`);
+    cf.innerHTML = MZ.ui.leadFormHtml('contact', {
+      submit: 'Отправить',
+      extra: `<div class="field"><label for="f-comment-contact">Сообщение</label>
+        <textarea class="input" id="f-comment-contact" name="comment" rows="3" placeholder="Вопрос, пожелание или удобное время для звонка"></textarea></div>`
+    });
     MZ.ui.bindLeadForm($('form', cf), 'callback');
 
-    // карту подгружаем, только когда до неё доскроллили
+    // Карта Яндекса ставит свои cookie: грузим её только после «Принять все» или по кнопке
     const map = $('#map');
+    const { lat, lon } = c.map;
+    let mapLoaded = false;
+    function loadMap() {
+      if (mapLoaded) return;
+      mapLoaded = true;
+      map.innerHTML = `<iframe title="Карта" loading="lazy" src="https://yandex.ru/map-widget/v1/?ll=${lon}%2C${lat}&z=15&pt=${lon},${lat},pm2rdm"></iframe>`;
+    }
+    function mapStub() {
+      map.innerHTML = `<div class="map__stub">${MZ.ui.icon('pin')}<b>Карта проезда</b>
+        <p>Карта Яндекса использует cookie. Показать её на странице или открыть в приложении?</p>
+        <div class="btns">
+          <button class="btn btn--navy btn--sm" type="button" data-map-load>Показать карту</button>
+          <a class="btn btn--outline btn--sm" href="https://yandex.ru/maps/?pt=${lon},${lat}&z=16&l=map" target="_blank" rel="noopener">Открыть в Яндекс Картах</a>
+        </div></div>`;
+    }
     new IntersectionObserver(([en], obs) => {
       if (!en.isIntersecting) return;
       obs.disconnect();
-      const { lat, lon } = c.map;
-      map.innerHTML = `<iframe title="Карта" loading="lazy" src="https://yandex.ru/map-widget/v1/?ll=${lon}%2C${lat}&z=15&pt=${lon},${lat},pm2rdm"></iframe>`;
+      if (MZ.ui.cookieConsent.get() === 'all') loadMap(); else mapStub();
     }, { rootMargin: '200px' }).observe(map);
+    map.addEventListener('click', e => { if (e.target.closest('[data-map-load]')) loadMap(); });
+    document.addEventListener('mz:cookie-consent', e => { if (e.detail === 'all' && map.innerHTML) loadMap(); });
+  }
+
+  /* ---------- юридические страницы: содержание и подсветка текущего раздела ---------- */
+  if (page === 'legal') {
+    const heads = $$('.legal__body h2[id]');
+    $('#toc').innerHTML = heads.map(h => `<a href="#${h.id}">${esc(h.textContent)}</a>`).join('');
+    const links = $$('#toc a');
+    const toc = $('.legal__toc');
+    // на ПК содержание раскрыто, на телефоне свёрнуто; реагируем только на смену ширины —
+    // мобильные браузеры шлют resize при прокрутке, когда прячется адресная строка
+    let lastW = window.innerWidth;
+    const syncOpen = () => { toc.open = window.innerWidth > 900; };
+    syncOpen();
+    window.addEventListener('resize', () => { if (window.innerWidth !== lastW) { lastW = window.innerWidth; syncOpen(); } });
+    links.forEach(a => a.addEventListener('click', () => { if (window.innerWidth <= 900) toc.open = false; }));
+    const io = new IntersectionObserver(entries => entries.forEach(en => {
+      if (!en.isIntersecting) return;
+      links.forEach(a => a.classList.toggle('is-active', a.getAttribute('href') === '#' + en.target.id));
+    }), { rootMargin: '-20% 0px -70% 0px' });
+    heads.forEach(h => io.observe(h));
+    const current = location.pathname.split('/').pop();
+    $$('.legal__docs a').forEach(a => a.classList.toggle('is-current', a.getAttribute('href') === current));
   }
 })();

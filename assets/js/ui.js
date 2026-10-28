@@ -31,7 +31,9 @@ MZ.ui = (() => {
     zap: '<path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z"/>',
     chevron: '<path d="m6 9 6 6 6-6"/>',
     sort: '<path d="m3 16 4 4 4-4M7 20V4M21 8l-4-4-4 4M17 4v16"/>',
-    filter: '<path d="M4 6h16M7 12h10M10 18h4"/>'
+    filter: '<path d="M4 6h16M7 12h10M10 18h4"/>',
+    cookie: '<path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5"/><path d="M8.5 8.5v.01M16 15.5v.01M12 12v.01M11 17v.01M7 14v.01"/>',
+    doc: '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4M10 13h6M10 17h6M8 9h2"/>'
   };
   const icon = (name, attrs = '') =>
     `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" ${attrs}>${ICONS[name]}</svg>`;
@@ -117,8 +119,13 @@ MZ.ui = (() => {
             </div>
           </div>
           <div class="footer__bottom">
-            <span>© ${new Date().getFullYear()} ${esc(MZ.config.brand)}. Все права защищены.</span>
-            <span>Демо-версия сайта</span>
+            <span>© ${new Date().getFullYear()} ${esc(MZ.config.brand)}. Все права защищены. Демо-версия сайта</span>
+            <nav class="footer__legal" aria-label="Документы">
+              <a href="privacy.html">Политика конфиденциальности</a>
+              <a href="consent.html">Согласие на обработку данных</a>
+              <a href="cookies.html">Политика cookie</a>
+              <button type="button" data-cookie-settings>Настройки cookie</button>
+            </nav>
           </div>
         </div>`;
     }
@@ -375,25 +382,44 @@ MZ.ui = (() => {
     if (err && text) err.textContent = text;
   }
 
-  // Проверка имени и телефона; возвращает данные формы или null
+  // Проверка имени, телефона и согласия на обработку данных; возвращает данные формы или null
   function readContact(form) {
     const name = form.elements.name;
     const phone = form.elements.phone;
+    const consent = form.elements.consent;
     let ok = true;
     if (name.value.trim().length < 2) { setError(name, true, 'Укажите имя'); ok = false; } else setError(name, false);
     if (!MZ.lead.isPhoneValid(phone.value)) { setError(phone, true, 'Номер целиком: +998 (XX) XXX-XX-XX'); ok = false; } else setError(phone, false);
-    if (!ok) { const bad = $('.has-error .input', form); if (bad) bad.focus(); return null; }
+    if (consent && !consent.checked) { setError(consent, true, 'Без согласия на обработку данных мы не сможем принять заявку'); ok = false; }
+    if (!ok) { const bad = $('.has-error input', form); if (bad) bad.focus(); return null; }
     return {
       name: name.value.trim(),
       phone: MZ.lead.formatPhone(phone.value),
       company: form.elements.company ? form.elements.company.value.trim() : '',
-      comment: form.elements.comment ? form.elements.comment.value.trim() : ''
+      comment: form.elements.comment ? form.elements.comment.value.trim() : '',
+      consent: !!(consent && consent.checked)
     };
   }
 
   function prepareForm(form) {
     if (form.elements.phone) MZ.lead.maskPhone(form.elements.phone);
     $$('.input', form).forEach(inp => inp.addEventListener('input', () => setError(inp, false)));
+    if (form.elements.consent) form.elements.consent.addEventListener('change', e => { if (e.target.checked) setError(e.target, false); });
+  }
+
+  // Галочка согласия: ссылки открываются в новой вкладке, чтобы не потерять заполненную форму и корзину
+  let formSeq = 0;
+  function agreeHtml() {
+    const id = 'agree-' + (++formSeq);
+    return `<div class="field field--agree">
+      <label class="agree" for="${id}">
+        <input type="checkbox" id="${id}" name="consent">
+        <span class="check__box">${icon('check')}</span>
+        <span>Я даю <a href="consent.html" target="_blank" rel="noopener">согласие на обработку персональных данных</a>
+          и принимаю <a href="privacy.html" target="_blank" rel="noopener">Политику конфиденциальности</a></span>
+      </label>
+      <span class="field__err"></span>
+    </div>`;
   }
 
   function setBusy(btn, busy, label) {
@@ -435,17 +461,20 @@ MZ.ui = (() => {
     wholesale: { title: 'Оптовым покупателям', lead: 'Магазинам, кафе и ресторанам — специальные цены и доставка по графику.', company: true }
   };
 
-  function leadFormHtml(type, { company = false, submit = 'Отправить заявку' } = {}) {
+  // extra — дополнительные поля перед галочкой согласия (например, «Сообщение» на странице контактов)
+  function leadFormHtml(type, { company = false, submit = 'Отправить заявку', extra = '' } = {}) {
+    const id = type + '-' + (formSeq + 1);
     return `<form novalidate>
-      <div class="field"><label for="f-name-${type}">Ваше имя</label>
-        <input class="input" id="f-name-${type}" name="name" autocomplete="name" placeholder="Например, Алишер"><span class="field__err"></span></div>
-      <div class="field"><label for="f-phone-${type}">Телефон</label>
-        <input class="input" id="f-phone-${type}" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+998 (__) ___-__-__"><span class="field__err"></span></div>
-      ${company ? `<div class="field"><label for="f-company-${type}">Компания / магазин</label>
-        <input class="input" id="f-company-${type}" name="company" placeholder="Необязательно"></div>` : ''}
+      <div class="field"><label for="f-name-${id}">Ваше имя</label>
+        <input class="input" id="f-name-${id}" name="name" autocomplete="name" placeholder="Например, Алишер"><span class="field__err"></span></div>
+      <div class="field"><label for="f-phone-${id}">Телефон</label>
+        <input class="input" id="f-phone-${id}" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+998 (__) ___-__-__"><span class="field__err"></span></div>
+      ${company ? `<div class="field"><label for="f-company-${id}">Компания / магазин</label>
+        <input class="input" id="f-company-${id}" name="company" placeholder="Необязательно"></div>` : ''}
+      ${extra}
+      ${agreeHtml()}
       <button class="btn btn--primary btn--block" type="submit">${submit}</button>
       <div class="form-error"></div>
-      <p class="form-note">Нажимая кнопку, вы соглашаетесь на обработку персональных данных.</p>
     </form>`;
   }
 
@@ -455,10 +484,73 @@ MZ.ui = (() => {
     bindLeadForm($('form', box), type);
   }
 
+  /* ---------- согласие на cookie ---------- */
+
+  // 'all' — все, включая сторонние (карта Яндекса, в будущем аналитика); 'necessary' — только нужные для работы сайта
+  const COOKIE_KEY = 'mz-cookie-consent';
+  const COOKIE_TTL = 365 * 24 * 3600 * 1000; // через год спрашиваем снова
+  let cookieMemo = null; // если localStorage недоступен (приватный режим)
+  const cookieConsent = {
+    get() {
+      try {
+        const v = JSON.parse(localStorage.getItem(COOKIE_KEY) || 'null');
+        if (v && Date.now() - new Date(v.at).getTime() < COOKIE_TTL) return v.value;
+        return null;
+      } catch (e) { return cookieMemo; }
+    },
+    set(value) {
+      cookieMemo = value;
+      try { localStorage.setItem(COOKIE_KEY, JSON.stringify({ value, at: new Date().toISOString() })); } catch (e) { /* приватный режим */ }
+      document.dispatchEvent(new CustomEvent('mz:cookie-consent', { detail: value }));
+      hideCookieBanner();
+    }
+  };
+
+  function showCookieBanner(force) {
+    if (!force && cookieConsent.get()) return;
+    let el = $('#cookieBanner');
+    if (!el) {
+      document.body.insertAdjacentHTML('beforeend', `
+        <div class="cookie" id="cookieBanner" role="dialog" aria-live="polite" aria-label="Использование cookie">
+          <div class="cookie__icon">${icon('cookie')}</div>
+          <p><b>Мы используем cookie</b>Хранилище браузера нужно для работы корзины, а cookie Яндекса — для карты на странице контактов.
+            Подробнее — в <a href="cookies.html">Политике cookie</a>.</p>
+          <div class="cookie__btns">
+            <button class="btn btn--outline" type="button" data-cookie="necessary">Только необходимые</button>
+            <button class="btn btn--primary" type="button" data-cookie="all">Принять все</button>
+          </div>
+        </div>`);
+      el = $('#cookieBanner');
+    }
+    setTimeout(() => el.classList.add('is-visible'), force ? 20 : 900);
+  }
+  function hideCookieBanner() {
+    const el = $('#cookieBanner');
+    if (el) el.classList.remove('is-visible');
+  }
+
+  // Реквизиты и контакты в документах: <span data-co="legalName"></span>
+  function fillCompany() {
+    const data = Object.assign({ site: location.host + location.pathname.replace(/[^/]*$/, '') }, MZ.config.contacts, MZ.config.company);
+    $$('[data-co]').forEach(el => {
+      const v = data[el.dataset.co];
+      if (v == null) return;
+      el.textContent = v;
+      if (el.tagName === 'A' && el.dataset.co === 'email') el.href = 'mailto:' + v;
+    });
+  }
+
   /* ---------- общие обработчики ---------- */
 
   function init() {
     renderLayout();
+    fillCompany();
+    showCookieBanner(false);
+    document.addEventListener('click', e => {
+      const ck = e.target.closest('[data-cookie]');
+      if (ck) cookieConsent.set(ck.dataset.cookie);
+      if (e.target.closest('[data-cookie-settings]')) showCookieBanner(true);
+    });
     document.addEventListener('click', e => {
       if (e.target.closest('[data-close]')) closeModal();
       const lead = e.target.closest('[data-lead]');
@@ -472,7 +564,7 @@ MZ.ui = (() => {
   }
 
   return { icon, esc, $, $$, init, openModal, closeModal, toast, observeReveal, snow, counters, dropdown, card, buyHtml, openProduct,
-    readContact, prepareForm, setBusy, successHtml, bindLeadForm, leadFormHtml, openLead };
+    readContact, prepareForm, agreeHtml, setBusy, successHtml, bindLeadForm, leadFormHtml, openLead, cookieConsent };
 })();
 
 MZ.ui.init();
