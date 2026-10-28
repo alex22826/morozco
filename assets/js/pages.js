@@ -55,56 +55,156 @@
 
   /* ---------- каталог ---------- */
   if (page === 'catalog') {
-    const state = { cat: 'all', q: '', sort: 'popular' };
+    // пустые cats/tags = «Вся продукция»
+    const state = { cats: new Set(), tags: new Set(), q: '', sort: 'popular' };
+    const TAGS = [{ id: 'hit', name: 'Хиты продаж' }, { id: 'new', name: 'Новинки' }];
+    const CATS = MZ.categories.filter(c => c.id !== 'all');
     const grid = $('#catalogGrid');
-    const chips = $('#chips');
     const countEl = $('#catalogCount');
+    const sheet = $('#filters');
+    const plural = (n, a, b, c) => (n % 10 === 1 && n % 100 !== 11 ? a : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? b : c);
+    const goods = n => n + ' ' + plural(n, 'товар', 'товара', 'товаров');
 
-    chips.innerHTML = MZ.categories.map(c => {
-      const n = c.id === 'all' ? MZ.products.length : MZ.products.filter(p => p.cat === c.id).length;
-      return `<button class="chip" type="button" data-cat="${c.id}">${esc(c.name)}<sup>${n}</sup></button>`;
-    }).join('');
+    const checkItem = (group, value, label, count) => `
+      <label class="check">
+        <input type="checkbox" data-group="${group}" value="${value}">
+        <span class="check__box">${MZ.ui.icon('check')}</span>
+        <span class="check__label">${esc(label)}</span><span class="check__count">${count}</span>
+      </label>`;
+    $('#catFilter').innerHTML = checkItem('all', 'all', 'Вся продукция', MZ.products.length) +
+      CATS.map(c => checkItem('cat', c.id, c.name, MZ.products.filter(p => p.cat === c.id).length)).join('');
+    $('#tagFilter').innerHTML = TAGS.map(t => checkItem('tag', t.id, t.name, MZ.products.filter(p => p.badge === t.id).length)).join('');
 
+    MZ.ui.dropdown($('#sortDd'), {
+      label: 'Сортировка', iconName: 'sort', value: state.sort,
+      options: [
+        { value: 'popular', label: 'Сначала хиты', short: 'Хиты' },
+        { value: 'cheap', label: 'Сначала дешевле', short: 'Дешевле' },
+        { value: 'expensive', label: 'Сначала дороже', short: 'Дороже' },
+        { value: 'name', label: 'По названию', short: 'А–Я' }
+      ],
+      onChange: v => { state.sort = v; render(); }
+    });
+
+    // в адресе — выбранные категории: catalog.html#pelmeni,manty
     function readHash() {
-      const h = decodeURIComponent(location.hash.slice(1));
-      state.cat = MZ.categories.some(c => c.id === h) ? h : 'all';
+      const ids = decodeURIComponent(location.hash.slice(1)).split(',');
+      state.cats = new Set(ids.filter(id => CATS.some(c => c.id === id)));
+    }
+    function writeHash() {
+      const h = [...state.cats].join(',');
+      history.replaceState(null, '', h ? '#' + h : location.pathname + location.search);
+    }
+
+    function filtered() {
+      const q = state.q.toLowerCase();
+      let list = MZ.products.filter(p =>
+        (!state.cats.size || state.cats.has(p.cat)) &&
+        (!state.tags.size || state.tags.has(p.badge)) &&
+        (!q || (p.name + ' ' + p.short + ' ' + p.composition).toLowerCase().includes(q)));
+      const rank = p => (p.badge === 'hit' ? 2 : p.badge === 'new' ? 1 : 0);
+      if (state.sort === 'popular') list = list.slice().sort((a, b) => rank(b) - rank(a));
+      if (state.sort === 'cheap') list = list.slice().sort((a, b) => a.price - b.price);
+      if (state.sort === 'expensive') list = list.slice().sort((a, b) => b.price - a.price);
+      if (state.sort === 'name') list = list.slice().sort((a, b) => a.name.localeCompare(b.name, 'ru'));
+      return list;
+    }
+
+    function syncFilters(n) {
+      $$('input[type=checkbox]', sheet).forEach(inp => {
+        inp.checked = inp.dataset.group === 'all' ? !state.cats.size
+          : inp.dataset.group === 'cat' ? state.cats.has(inp.value) : state.tags.has(inp.value);
+      });
+      const active = state.cats.size + state.tags.size;
+      $('#filterCount').hidden = !active;
+      $('#filterCount').textContent = active;
+      $('.filters__reset').hidden = !active;
+      $('#filtersApply').textContent = n ? 'Показать ' + goods(n) : 'Ничего не найдено';
+
+      const chips = [
+        ...[...state.cats].map(id => ({ key: 'cat:' + id, label: CATS.find(c => c.id === id).name })),
+        ...[...state.tags].map(id => ({ key: 'tag:' + id, label: TAGS.find(t => t.id === id).name })),
+        ...(state.q ? [{ key: 'q:', label: '«' + state.q + '»' }] : [])
+      ];
+      $('#activeFilters').innerHTML = chips.length
+        ? chips.map(c => `<button class="af" type="button" data-remove-filter="${esc(c.key)}" aria-label="Убрать фильтр ${esc(c.label)}">${esc(c.label)}${MZ.ui.icon('x')}</button>`).join('') +
+          '<button class="af af--reset" type="button" data-filters-reset>Сбросить всё</button>'
+        : '';
     }
 
     function render() {
-      $$('.chip', chips).forEach(c => c.classList.toggle('is-active', c.dataset.cat === state.cat));
-      const q = state.q.toLowerCase();
-      let list = MZ.products.filter(p => (state.cat === 'all' || p.cat === state.cat) &&
-        (!q || (p.name + ' ' + p.short + ' ' + p.composition).toLowerCase().includes(q)));
-      if (state.sort === 'cheap') list = list.slice().sort((a, b) => a.price - b.price);
-      if (state.sort === 'expensive') list = list.slice().sort((a, b) => b.price - a.price);
-      if (state.sort === 'popular') list = list.slice().sort((a, b) => (b.badge === 'hit') - (a.badge === 'hit'));
-
+      const list = filtered();
       const n = list.length;
-      countEl.textContent = n ? `Найдено: ${n}` : '';
+      syncFilters(n);
+      countEl.textContent = n ? goods(n) : '';
       grid.innerHTML = n
-        ? list.map((p, i) => MZ.ui.card(p, 'is-enter').replace('class="card is-enter"', `class="card is-enter" style="animation-delay:${Math.min(i, 8) * 45}ms"`)).join('')
-        : `<div class="empty" style="grid-column:1/-1">${MZ.ui.icon('search')}<h3>Ничего не нашли</h3><p>Попробуйте другой запрос или выберите «Вся продукция».</p></div>`;
+        ? list.map((p, i) => MZ.ui.card(p, 'is-enter').replace('class="card is-enter"', `class="card is-enter" style="animation-delay:${Math.min(i, 8) * 40}ms"`)).join('')
+        : `<div class="empty" style="grid-column:1/-1">${MZ.ui.icon('search')}<h3>Ничего не нашли</h3>
+             <p>Попробуйте другой запрос или снимите часть фильтров.</p>
+             <button class="btn btn--navy btn--sm" type="button" data-filters-reset style="margin-top:16px">Показать всю продукцию</button></div>`;
     }
 
-    chips.addEventListener('click', e => {
-      const b = e.target.closest('.chip');
-      if (!b) return;
-      state.cat = b.dataset.cat;
-      history.replaceState(null, '', state.cat === 'all' ? location.pathname : '#' + state.cat);
+    function reset() {
+      state.cats.clear();
+      state.tags.clear();
+      state.q = '';
+      $('#search').value = '';
+      writeHash();
       render();
-      b.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-    });
-    let t;
-    $('#search').addEventListener('input', e => { clearTimeout(t); t = setTimeout(() => { state.q = e.target.value.trim(); render(); }, 150); });
-    $('#sort').addEventListener('change', e => { state.sort = e.target.value; render(); });
-    window.addEventListener('hashchange', () => { readHash(); render(); });
+    }
 
-    // тень у панели фильтров, когда она прилипла к шапке
-    const toolbar = $('.toolbar');
-    const sentinel = document.createElement('div');
-    toolbar.before(sentinel);
-    new IntersectionObserver(([en]) => toolbar.classList.toggle('is-stuck', !en.isIntersecting),
-      { rootMargin: `-${parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-h'), 10) + 1}px 0px 0px 0px` }).observe(sentinel);
+    sheet.addEventListener('change', e => {
+      const inp = e.target.closest('input[type=checkbox]');
+      if (!inp) return;
+      const { group } = inp.dataset;
+      if (group === 'all') state.cats.clear();
+      else {
+        const set = group === 'cat' ? state.cats : state.tags;
+        if (inp.checked) set.add(inp.value); else set.delete(inp.value);
+        // отмечены все категории — это и есть «Вся продукция»
+        if (group === 'cat' && state.cats.size === CATS.length) state.cats.clear();
+      }
+      writeHash();
+      render();
+    });
+
+    // на телефоне фильтры — выезжающая снизу панель
+    const isSheet = () => window.matchMedia('(max-width: 900px)').matches;
+    const syncAria = () => sheet.setAttribute('aria-hidden', isSheet() && !document.body.classList.contains('filters-open'));
+    function openSheet() {
+      document.body.classList.add('filters-open', 'no-scroll');
+      syncAria();
+    }
+    function closeSheet() {
+      if (!document.body.classList.contains('filters-open')) return;
+      document.body.classList.remove('filters-open', 'no-scroll');
+      syncAria();
+      const main = $('.catalog__main');
+      if (main.getBoundingClientRect().top < 0) main.scrollIntoView({ behavior: 'smooth' });
+    }
+    window.addEventListener('resize', syncAria);
+    syncAria();
+
+    document.addEventListener('click', e => {
+      if (e.target.closest('[data-filters-open]')) openSheet();
+      else if (e.target.closest('[data-filters-close]')) closeSheet();
+      else if (e.target.closest('[data-filters-reset]')) reset();
+      const rm = e.target.closest('[data-remove-filter]');
+      if (rm) {
+        const [kind, id] = rm.dataset.removeFilter.split(':');
+        if (kind === 'cat') state.cats.delete(id);
+        if (kind === 'tag') state.tags.delete(id);
+        if (kind === 'q') { state.q = ''; $('#search').value = ''; }
+        writeHash();
+        render();
+      }
+    });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });
+
+    let t;
+    $('#search').addEventListener('input', e => { clearTimeout(t); t = setTimeout(() => { state.q = e.target.value.trim(); render(); }, 200); });
+    $('#search').addEventListener('keydown', e => { if (e.key === 'Enter') e.target.blur(); });
+    window.addEventListener('hashchange', () => { readHash(); render(); });
 
     readHash();
     render();

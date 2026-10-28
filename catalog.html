@@ -9,7 +9,7 @@
   <link rel="icon" type="image/png" href="assets/img/favicon.png">
   <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
   <link rel="preload" href="assets/fonts/manrope-cyr.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="assets/css/style.css?v=4">
+  <link rel="stylesheet" href="assets/css/style.css?v=6">
 </head>
 <body data-page="catalog">
   <header class="site-header" id="siteHeader"></header>
@@ -24,24 +24,54 @@
       </div>
     </section>
 
-    <div class="toolbar">
-      <div class="container toolbar__row">
-        <div class="chips" id="chips" role="tablist" aria-label="Категории"></div>
-        <label class="search">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-          <input class="input" id="search" type="search" placeholder="Поиск по каталогу" aria-label="Поиск по каталогу">
-        </label>
-        <select class="sort" id="sort" aria-label="Сортировка">
-          <option value="popular">Сначала хиты</option>
-          <option value="cheap">Сначала дешевле</option>
-          <option value="expensive">Сначала дороже</option>
-        </select>
-      </div>
-    </div>
+    <section class="container catalog">
+      <!-- Фильтры: колонка слева на ПК, выезжающая снизу панель на телефоне -->
+      <aside class="filters" id="filters" aria-label="Фильтры" aria-hidden="false">
+        <div class="filters__panel">
+          <div class="filters__grip" aria-hidden="true"></div>
+          <div class="filters__head">
+            <h2>Фильтры</h2>
+            <button class="filters__reset" type="button" data-filters-reset hidden>Сбросить</button>
+            <button class="icon-btn filters__close" type="button" data-filters-close aria-label="Закрыть фильтры"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+          </div>
+          <div class="filters__body">
+            <fieldset class="filters__group">
+              <legend>Категории</legend>
+              <div id="catFilter"></div>
+            </fieldset>
+            <fieldset class="filters__group">
+              <legend>Особенности</legend>
+              <div id="tagFilter"></div>
+            </fieldset>
+          </div>
+          <div class="filters__foot">
+            <button class="btn btn--primary btn--block" type="button" data-filters-close id="filtersApply">Показать</button>
+          </div>
+        </div>
+        <div class="filters__help">
+          <b>Нужна помощь с выбором?</b>
+          <p>Расскажем о продукции и подскажем, что взять для семьи или для кафе.</p>
+          <button class="btn btn--navy btn--sm btn--block" type="button" data-lead="callback">Заказать звонок</button>
+        </div>
+      </aside>
+      <div class="filters-overlay" data-filters-close></div>
 
-    <section class="container" style="padding-bottom:64px">
-      <div class="catalog-count" id="catalogCount"></div>
-      <div class="grid-products" id="catalogGrid"></div>
+      <div class="catalog__main">
+        <label class="search catalog__search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <input class="input" id="search" type="search" placeholder="Поиск: пельмени, манты, сырники…" aria-label="Поиск по каталогу" enterkeyhint="search">
+        </label>
+        <div class="catalog__bar">
+          <button class="filter-btn" type="button" data-filters-open aria-controls="filters">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+            Фильтры<span class="filter-btn__count" id="filterCount" hidden></span>
+          </button>
+          <div id="sortDd"></div>
+        </div>
+        <div class="active-filters" id="activeFilters"></div>
+        <div class="catalog-count" id="catalogCount"></div>
+        <div class="grid-products grid-products--catalog" id="catalogGrid"></div>
+      </div>
     </section>
 
     <section class="section section--ice">
@@ -62,12 +92,12 @@
 
   <footer class="site-footer" id="siteFooter"></footer>
 
-  <script src="assets/js/config.js?v=4"></script>
-  <script src="assets/js/data.js?v=4"></script>
-  <script src="assets/js/rules.js?v=4"></script>
-  <script src="assets/js/lead.js?v=4"></script>
-  <script src="assets/js/ui.js?v=4"></script>
-  <script src="assets/js/cart.js?v=4"></script>
-  <script src="assets/js/pages.js?v=4"></script>
+  <script src="assets/js/config.js?v=6"></script>
+  <script src="assets/js/data.js?v=6"></script>
+  <script src="assets/js/rules.js?v=6"></script>
+  <script src="assets/js/lead.js?v=6"></script>
+  <script src="assets/js/ui.js?v=6"></script>
+  <script src="assets/js/cart.js?v=6"></script>
+  <script src="assets/js/pages.js?v=6"></script>
 </body>
 </html>

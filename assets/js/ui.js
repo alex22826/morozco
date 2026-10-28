@@ -28,7 +28,10 @@ MZ.ui = (() => {
     star: '<path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01Z"/>',
     users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
     chat: '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"/>',
-    zap: '<path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z"/>'
+    zap: '<path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z"/>',
+    chevron: '<path d="m6 9 6 6 6-6"/>',
+    sort: '<path d="m3 16 4 4 4-4M7 20V4M21 8l-4-4-4 4M17 4v16"/>',
+    filter: '<path d="M4 6h16M7 12h10M10 18h4"/>'
   };
   const icon = (name, attrs = '') =>
     `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" ${attrs}>${ICONS[name]}</svg>`;
@@ -233,6 +236,81 @@ MZ.ui = (() => {
     els.forEach(e => { e.textContent = '0' + (e.dataset.suffix || ''); io.observe(e); });
   }
 
+  /* ---------- выпадающий список (вместо системного select) ---------- */
+
+  // options: [{ value, label }]; onChange(value) вызывается при выборе
+  function dropdown(root, { options, value, onChange, label = '', iconName = '' }) {
+    root.classList.add('dd');
+    root.innerHTML = `
+      <button class="dd__btn" type="button" aria-haspopup="listbox" aria-expanded="false" aria-label="${esc(label)}">
+        ${iconName ? icon(iconName, 'class="dd__icon"') : ''}<span class="dd__value"></span>${icon('chevron', 'class="dd__chev"')}
+      </button>
+      <ul class="dd__list" role="listbox" tabindex="-1" aria-label="${esc(label)}">
+        ${options.map(o => `<li class="dd__opt" role="option" data-value="${esc(o.value)}" aria-selected="false"><span>${esc(o.label)}</span>${icon('check', 'class="dd__check"')}</li>`).join('')}
+      </ul>`;
+    const btn = $('.dd__btn', root);
+    const list = $('.dd__list', root);
+    const opts = $$('.dd__opt', root);
+    let current = value, active = -1;
+
+    function set(v, fire) {
+      current = v;
+      const o = options.find(x => x.value === v) || options[0];
+      // short — подпись для узкой кнопки на телефоне
+      $('.dd__value', root).innerHTML = `<span class="dd__full">${esc(o.label)}</span><span class="dd__short">${esc(o.short || o.label)}</span>`;
+      opts.forEach(li => li.setAttribute('aria-selected', li.dataset.value === v));
+      if (fire && onChange) onChange(v);
+    }
+    function highlight(i) {
+      active = (i + opts.length) % opts.length;
+      opts.forEach((li, k) => li.classList.toggle('is-active', k === active));
+      opts[active].scrollIntoView({ block: 'nearest' });
+    }
+    function open() {
+      if (root.classList.contains('is-open')) return;
+      root.classList.add('is-open');
+      btn.setAttribute('aria-expanded', 'true');
+      // если снизу мало места — открываем вверх
+      const r = btn.getBoundingClientRect();
+      root.classList.toggle('dd--up', window.innerHeight - r.bottom < 220 && r.top > 220);
+      highlight(Math.max(0, options.findIndex(o => o.value === current)));
+      list.focus({ preventScroll: true });
+    }
+    function close(focusBtn) {
+      if (!root.classList.contains('is-open')) return;
+      root.classList.remove('is-open');
+      btn.setAttribute('aria-expanded', 'false');
+      if (focusBtn) btn.focus({ preventScroll: true });
+    }
+
+    btn.addEventListener('click', () => (root.classList.contains('is-open') ? close(true) : open()));
+    btn.addEventListener('keydown', e => {
+      if (['ArrowDown', 'ArrowUp'].includes(e.key)) { e.preventDefault(); open(); }
+    });
+    list.addEventListener('click', e => {
+      const li = e.target.closest('.dd__opt');
+      if (!li) return;
+      set(li.dataset.value, true);
+      close(true);
+    });
+    list.addEventListener('mousemove', e => {
+      const li = e.target.closest('.dd__opt');
+      if (li) highlight(opts.indexOf(li));
+    });
+    list.addEventListener('keydown', e => {
+      if (e.key === 'ArrowDown') { e.preventDefault(); highlight(active + 1); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); highlight(active - 1); }
+      else if (e.key === 'Home') { e.preventDefault(); highlight(0); }
+      else if (e.key === 'End') { e.preventDefault(); highlight(opts.length - 1); }
+      else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); set(opts[active].dataset.value, true); close(true); }
+      else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); close(true); }
+      else if (e.key === 'Tab') close(false);
+    });
+    document.addEventListener('click', e => { if (!root.contains(e.target)) close(false); });
+    set(value, false);
+    return { set: v => set(v, false), get: () => current };
+  }
+
   /* ---------- карточка товара и окно товара ---------- */
 
   const BADGES = { hit: '<span class="badge">Хит продаж</span>', new: '<span class="badge badge--new">Новинка</span>' };
@@ -393,7 +471,7 @@ MZ.ui = (() => {
     pauseOffscreen();
   }
 
-  return { icon, esc, $, $$, init, openModal, closeModal, toast, observeReveal, snow, counters, card, buyHtml, openProduct,
+  return { icon, esc, $, $$, init, openModal, closeModal, toast, observeReveal, snow, counters, dropdown, card, buyHtml, openProduct,
     readContact, prepareForm, setBusy, successHtml, bindLeadForm, leadFormHtml, openLead };
 })();
 
