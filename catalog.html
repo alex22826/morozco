@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Каталог продукции — Moroz'Co</title>
+  <meta name="description" content="Каталог Moroz'Co: пельмени, вареники, манты, хинкали, котлеты куриные и мясные, долма, голубцы, блинчики и сырники.">
+  <meta name="theme-color" content="#123f73">
+  <link rel="icon" type="image/png" href="assets/img/favicon.png">
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+  <link rel="preload" href="assets/fonts/manrope-cyr.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/css/style.css?v=4">
+</head>
+<body data-page="catalog">
+  <header class="site-header" id="siteHeader"></header>
+
+  <main>
+    <section class="page-hero" data-anim>
+      <div class="snow" aria-hidden="true"></div>
+      <div class="container">
+        <div class="crumbs"><a href="index.html">Главная</a><span>/</span><span>Каталог</span></div>
+        <h1>Каталог продукции</h1>
+        <p>Домашние полуфабрикаты ручной лепки. Добавьте товары в корзину и оставьте заявку — менеджер перезвонит.</p>
+      </div>
+    </section>
+
+    <div class="toolbar">
+      <div class="container toolbar__row">
+        <div class="chips" id="chips" role="tablist" aria-label="Категории"></div>
+        <label class="search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <input class="input" id="search" type="search" placeholder="Поиск по каталогу" aria-label="Поиск по каталогу">
+        </label>
+        <select class="sort" id="sort" aria-label="Сортировка">
+          <option value="popular">Сначала хиты</option>
+          <option value="cheap">Сначала дешевле</option>
+          <option value="expensive">Сначала дороже</option>
+        </select>
+      </div>
+    </div>
+
+    <section class="container" style="padding-bottom:64px">
+      <div class="catalog-count" id="catalogCount"></div>
+      <div class="grid-products" id="catalogGrid"></div>
+    </section>
+
+    <section class="section section--ice">
+      <div class="container">
+        <div class="cta cta--row reveal">
+          <div>
+            <h2>Не нашли нужное?</h2>
+            <p>Делаем продукцию под заказ для магазинов и кафе: свой вес фасовки, начинки и упаковка.</p>
+          </div>
+          <div class="slide__btns" style="margin:0">
+            <button class="btn btn--primary" type="button" data-lead="wholesale">Обсудить заказ</button>
+            <button class="btn btn--ghost" type="button" data-lead="callback">Заказать звонок</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer" id="siteFooter"></footer>
+
+  <script src="assets/js/config.js?v=4"></script>
+  <script src="assets/js/data.js?v=4"></script>
+  <script src="assets/js/rules.js?v=4"></script>
+  <script src="assets/js/lead.js?v=4"></script>
+  <script src="assets/js/ui.js?v=4"></script>
+  <script src="assets/js/cart.js?v=4"></script>
+  <script src="assets/js/pages.js?v=4"></script>
+</body>
+</html>

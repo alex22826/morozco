@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Заявки — Moroz'Co</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#0a2648">
+  <link rel="icon" type="image/png" href="../assets/img/favicon.png">
+  <link rel="stylesheet" href="../assets/css/style.css?v=4">
+  <link rel="stylesheet" href="../assets/css/crm.css?v=4">
+</head>
+<body class="crm">
+  <header class="crm-top">
+    <div class="crm-wrap crm-top__row">
+      <a class="crm-brand" href="../index.html" title="Открыть сайт">
+        <img src="../assets/img/logo-160.webp" alt="" width="44" height="44">
+        <span><b>Заявки с сайта</b><small>Moroz'Co · панель менеджера</small></span>
+      </a>
+      <span class="live" id="live"><i></i><span>Подключение…</span></span>
+      <div class="crm-top__actions">
+        <button class="crm-btn" type="button" id="btnNotify" title="Уведомления браузера"></button>
+        <button class="crm-btn" type="button" id="btnSound" title="Звук новой заявки"></button>
+        <button class="crm-btn crm-btn--accent" type="button" id="btnTest">Тестовая заявка</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="crm-wrap">
+    <section class="kpis" id="kpis"></section>
+
+    <section class="crm-bar">
+      <div class="tabs" id="tabs"></div>
+      <label class="search crm-search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input class="input" id="q" type="search" placeholder="Имя, телефон или №" aria-label="Поиск заявок">
+      </label>
+    </section>
+
+    <section class="leads" id="leads"></section>
+
+    <footer class="crm-foot" id="crmFoot"></footer>
+  </main>
+
+  <div class="toasts" id="toasts"></div>
+
+  <script src="../assets/js/config.js?v=4"></script>
+  <script src="../assets/js/lead.js?v=4"></script>
+  <script src="../assets/js/crm.js?v=4"></script>
+</body>
+</html>
